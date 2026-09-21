@@ -7,8 +7,18 @@ from .infrastructure_client import (
 
 from .decision_model import calculate_decision
 
+from .cost_energy_model import (
+    calculate_cost_and_energy,
+    compare_scaling_options
+)
+
 
 def execute_decision(decision):
+    """
+    Execute the infrastructure action selected
+    by the Decision Model.
+    """
+
     if decision == "SCALE_UP":
         return scale_up()
 
@@ -24,19 +34,73 @@ def execute_decision(decision):
     }
 
 
-# Get current infrastructure status
+# --------------------------------------------------
+# 1. Get current infrastructure status
+# --------------------------------------------------
+
 status = get_status()
 running_containers = status["running"]
 
-print("Current infrastructure:")
+print("========================================")
+print(" CURRENT INFRASTRUCTURE")
+print("========================================")
 print(status)
 
 
-# Simulated prediction from Member 2
+# --------------------------------------------------
+# 2. Calculate current cost and energy
+# --------------------------------------------------
+
+cost_energy = calculate_cost_and_energy(running_containers)
+
+print("\n========================================")
+print(" CURRENT COST AND ENERGY")
+print("========================================")
+
+print("Running containers:",
+      cost_energy["running_containers"])
+
+print("Estimated cost per hour: $",
+      cost_energy["estimated_cost_per_hour"])
+
+print("Estimated energy:",
+      cost_energy["estimated_energy_watts"],
+      "W")
+
+
+# --------------------------------------------------
+# 3. Compare scaling options
+# --------------------------------------------------
+
+scaling_options = compare_scaling_options(
+    running_containers
+)
+
+print("\n========================================")
+print(" SCALING COST/ENERGY COMPARISON")
+print("========================================")
+
+print("Current:")
+print(scaling_options["current"])
+
+print("\nScale Up:")
+print(scaling_options["scale_up"])
+
+print("\nScale Down:")
+print(scaling_options["scale_down"])
+
+
+# --------------------------------------------------
+# 4. Simulated prediction from Member 2
+# --------------------------------------------------
+
 predicted_cpu = 90
 
 
-# Use Decision Model
+# --------------------------------------------------
+# 5. Decision Model
+# --------------------------------------------------
+
 decision_result = calculate_decision(
     current_cpu=70,
     predicted_cpu=predicted_cpu,
@@ -49,13 +113,23 @@ decision = decision_result["decision"]
 reason = decision_result["reason"]
 
 
-print("\nPredicted CPU:", predicted_cpu)
+print("\n========================================")
+print(" DECISION")
+print("========================================")
+
+print("Predicted CPU:", predicted_cpu)
 print("Decision:", decision)
 print("Reason:", reason)
 
 
-# Execute the decision
+# --------------------------------------------------
+# 6. Execute the decision
+# --------------------------------------------------
+
 result = execute_decision(decision)
 
-print("\nExecution result:")
+print("\n========================================")
+print(" EXECUTION RESULT")
+print("========================================")
+
 print(result)
