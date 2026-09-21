@@ -14,10 +14,7 @@ from .cost_energy_model import (
 
 
 def execute_decision(decision):
-    """
-    Execute the infrastructure action selected
-    by the Decision Model.
-    """
+    """Execute the selected infrastructure action."""
 
     if decision == "SCALE_UP":
         return scale_up()
@@ -35,7 +32,7 @@ def execute_decision(decision):
 
 
 # --------------------------------------------------
-# 1. Get current infrastructure status
+# 1. Current infrastructure
 # --------------------------------------------------
 
 status = get_status()
@@ -48,7 +45,7 @@ print(status)
 
 
 # --------------------------------------------------
-# 2. Calculate current cost and energy
+# 2. Current cost and energy
 # --------------------------------------------------
 
 cost_energy = calculate_cost_and_energy(running_containers)
@@ -69,7 +66,7 @@ print("Estimated energy:",
 
 
 # --------------------------------------------------
-# 3. Compare scaling options
+# 3. Scaling comparison
 # --------------------------------------------------
 
 scaling_options = compare_scaling_options(
@@ -94,11 +91,11 @@ print(scaling_options["scale_down"])
 # 4. Simulated prediction from Member 2
 # --------------------------------------------------
 
-predicted_cpu = 90
+predicted_cpu = 50
 
 
 # --------------------------------------------------
-# 5. Decision Model
+# 5. Decision Intelligence
 # --------------------------------------------------
 
 decision_result = calculate_decision(
@@ -113,17 +110,33 @@ decision = decision_result["decision"]
 reason = decision_result["reason"]
 
 
+# --------------------------------------------------
+# 6. Display Decision Intelligence results
+# --------------------------------------------------
+
 print("\n========================================")
-print(" DECISION")
+print(" DECISION INTELLIGENCE")
 print("========================================")
 
 print("Predicted CPU:", predicted_cpu)
 print("Decision:", decision)
 print("Reason:", reason)
 
+print("\nWeighted Score:",
+      decision_result["weighted_score"])
+
+print("\nIndividual Scores:")
+
+scores = decision_result["scores"]
+
+print("Performance:", scores["performance"])
+print("Reliability:", scores["reliability"])
+print("Cost:", scores["cost"])
+print("Energy:", scores["energy"])
+
 
 # --------------------------------------------------
-# 6. Execute the decision
+# 7. Execute decision
 # --------------------------------------------------
 
 result = execute_decision(decision)
