@@ -12,6 +12,8 @@ from .cost_energy_model import (
     compare_scaling_options
 )
 
+from .prediction_client import get_prediction
+
 
 def execute_decision(decision):
     """Execute the selected infrastructure action."""
@@ -32,7 +34,7 @@ def execute_decision(decision):
 
 
 # --------------------------------------------------
-# 1. Current infrastructure
+# 1. Get current infrastructure status
 # --------------------------------------------------
 
 status = get_status()
@@ -66,7 +68,7 @@ print("Estimated energy:",
 
 
 # --------------------------------------------------
-# 3. Scaling comparison
+# 3. Scaling cost/energy comparison
 # --------------------------------------------------
 
 scaling_options = compare_scaling_options(
@@ -88,10 +90,26 @@ print(scaling_options["scale_down"])
 
 
 # --------------------------------------------------
-# 4. Simulated prediction from Member 2
+# 4. Get prediction
 # --------------------------------------------------
 
-predicted_cpu = 50
+current_cpu = 50
+memory = 65
+
+prediction = get_prediction(
+    current_cpu=current_cpu,
+    memory=memory,
+    predicted_cpu=50
+)
+predicted_cpu = prediction["predicted_cpu"]
+
+print("\n========================================")
+print(" PREDICTION")
+print("========================================")
+
+print("Current CPU:", current_cpu)
+print("Memory:", memory)
+print("Predicted CPU:", predicted_cpu)
 
 
 # --------------------------------------------------
@@ -99,9 +117,9 @@ predicted_cpu = 50
 # --------------------------------------------------
 
 decision_result = calculate_decision(
-    current_cpu=70,
+    current_cpu=current_cpu,
     predicted_cpu=predicted_cpu,
-    memory=65,
+    memory=memory,
     running_containers=running_containers,
     healthy=True
 )
@@ -110,15 +128,10 @@ decision = decision_result["decision"]
 reason = decision_result["reason"]
 
 
-# --------------------------------------------------
-# 6. Display Decision Intelligence results
-# --------------------------------------------------
-
 print("\n========================================")
 print(" DECISION INTELLIGENCE")
 print("========================================")
 
-print("Predicted CPU:", predicted_cpu)
 print("Decision:", decision)
 print("Reason:", reason)
 
@@ -136,7 +149,7 @@ print("Energy:", scores["energy"])
 
 
 # --------------------------------------------------
-# 7. Execute decision
+# 6. Execute decision
 # --------------------------------------------------
 
 result = execute_decision(decision)
