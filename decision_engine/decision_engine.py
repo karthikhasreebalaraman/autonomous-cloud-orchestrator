@@ -5,23 +5,10 @@ from .infrastructure_client import (
     recover
 )
 
-
-def decide(predicted_cpu, running_containers, unhealthy=False):
-
-    if unhealthy:
-        return "RECOVER"
-
-    if predicted_cpu > 80:
-        return "SCALE_UP"
-
-    if predicted_cpu < 30 and running_containers > 2:
-        return "SCALE_DOWN"
-
-    return "NO_ACTION"
+from .decision_model import calculate_decision
 
 
 def execute_decision(decision):
-
     if decision == "SCALE_UP":
         return scale_up()
 
@@ -37,30 +24,38 @@ def execute_decision(decision):
     }
 
 
-# -----------------------------
-# TEST
-# -----------------------------
-
+# Get current infrastructure status
 status = get_status()
-
 running_containers = status["running"]
 
 print("Current infrastructure:")
 print(status)
 
+
 # Simulated prediction from Member 2
 predicted_cpu = 90
 
-decision = decide(
+
+# Use Decision Model
+decision_result = calculate_decision(
+    current_cpu=70,
     predicted_cpu=predicted_cpu,
+    memory=65,
     running_containers=running_containers,
-    unhealthy=False
+    healthy=True
 )
+
+decision = decision_result["decision"]
+reason = decision_result["reason"]
+
 
 print("\nPredicted CPU:", predicted_cpu)
 print("Decision:", decision)
+print("Reason:", reason)
 
+
+# Execute the decision
 result = execute_decision(decision)
 
-print("Execution result:")
+print("\nExecution result:")
 print(result)
