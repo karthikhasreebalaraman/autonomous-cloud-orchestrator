@@ -1,0 +1,16 @@
+cpu
+memory
+request_rate
+network
+latency
+resource_count
+cpu_lag_1
+cpu_lag_2
+cpu_lag_3
+request_lag_1
+request_lag_2
+request_lag_3
+cpu_rolling_mean_3
+request_rolling_mean_3
+cpu_change
+request_change
