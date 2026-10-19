@@ -21,3 +21,18 @@ def scale_down():
 def recover():
     response = requests.post(f"{BASE_URL}/recover")
     return response.json()
+
+
+def restart():
+    response = requests.post(f"{BASE_URL}/restart")
+    return response.json()
+
+
+def replace():
+    response = requests.post(f"{BASE_URL}/replace")
+    return response.json()
+
+
+def redistribute():
+    response = requests.post(f"{BASE_URL}/redistribute")
+    return response.json()
